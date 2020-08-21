@@ -1,0 +1,13 @@
+/usr/lib/dart/bin/dart --enable-asserts --enable-vm-service:40109 /home/manjunath/work/problem-solving/geektrust-tame-of-thrones-dart/bin/tame_of_thrones_dart.dart docs/sample.txt
+Observatory listening on http://127.0.0.1:40109/tmaPv43UT7Y=/
+
+passed in params: filePath = docs/sample.txt, messages = null
+input: ROZO, cipher: 3, decrypt: OLWL
+input: FAIJWJSOOFAMAU, cipher: 5, decrypt: AVDERENJJAVHVP
+input: STHSTSTVSASOS, cipher: 7, decrypt: LMALMLMOLTLHL
+input: ROZO, cipher: 3, decrypt: OLWL
+input: FAIJWJSOOFAMAU, cipher: 5, decrypt: AVDERENJJAVHVP
+input: STHSTSTVSASOS, cipher: 7, decrypt: LMALMLMOLTLHL
+Result : SPACE AIR LAND ICE
+
+Process finished with exit code 0
