@@ -18,7 +18,7 @@ public class TameOfThronesMainTest {
 
     @Test
     public void testInputFromFile() throws IOException {
-        runTestFromFile("SPACE AIR LAND ICE", "docs/sample.txt");
+        runTestFromFile("SPACE AIR LAND ICE", "docs/input-01.txt");
     }
 
     @Test
