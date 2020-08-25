@@ -5,15 +5,16 @@ package com.problemsolving.geektrust.tameofthrones;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Bytes;
-import com.problemsolving.geektrust.tameofthrones.model.Kingdom;
-import com.problemsolving.geektrust.tameofthrones.util.CaesarCipher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -24,27 +25,27 @@ public class TameOfThronesMain {
         LOGGER.debug("Arguments are : {}", args);
         if (args.length == 0) throw new Exception("Please specify file with commands.");
         TameOfThronesMain instance = new TameOfThronesMain();
-        System.out.println(args.length == 1 ? instance.processInputFromFile(args[0]) : instance.processInputFromCli(args));
+        System.out.println(args.length == 1 ? instance.acceptKingdomsMessagesFromFile(args[0]) : instance.acceptKingdomsMessagesFromCli(args));
     }
 
-    public String processInputFromFile(String inputFilePath) throws IOException {
-        return processMessages(getInput(inputFilePath));
+    public String acceptKingdomsMessagesFromFile(String filePathContainingKingdomsMessages) throws IOException {
+        return processKingdomsMessages(extractMessagesFromFile(filePathContainingKingdomsMessages));
     }
 
-    public String processInputFromCli(String[] inputsFromCli) throws Exception {
-        if (inputsFromCli.length < 6)
-            throw new Exception("Please specify commands in the format: kingdom1 msg1 kingdom2 msg2 kingdom3 msg3");
-        return processMessages(ImmutableList.of(
-                String.join(" ", inputsFromCli[0], inputsFromCli[1]),
-                String.join(" ", inputsFromCli[2], inputsFromCli[3]),
-                String.join(" ", inputsFromCli[4], inputsFromCli[5])
+    public String acceptKingdomsMessagesFromCli(String[] messagesFromKingdoms) throws Exception {
+        if (messagesFromKingdoms.length < 6)
+            throw new Exception("Please specify inputs in the format: kingdom1 msg1 kingdom2 msg2 kingdom3 msg3");
+        return processKingdomsMessages(ImmutableList.of(
+                String.join(" ", messagesFromKingdoms[0], messagesFromKingdoms[1]),
+                String.join(" ", messagesFromKingdoms[2], messagesFromKingdoms[3]),
+                String.join(" ", messagesFromKingdoms[4], messagesFromKingdoms[5])
         ));
     }
 
-    public String processMessages(List<String> inputs) throws IOException {
-        LOGGER.debug("Messages from kingdoms : {}", inputs);
-        if (inputs.size() < 3) return "NONE";
-        Set<String> allies = inputs.stream()
+    public String processKingdomsMessages(List<String> messagesFromKingdoms) throws IOException {
+        LOGGER.debug("Messages from kingdoms : {}", messagesFromKingdoms);
+        if (messagesFromKingdoms.size() < 3) return "NONE";
+        Set<String> allies = messagesFromKingdoms.stream()
                 .map(str -> new String[]{str.substring(0, str.indexOf(" ")), str.substring(str.indexOf(" ") + 1).replace(" ", "")})
                 .map(array -> {
                     array[1] = CaesarCipher.decrypt(array[1], CaesarCipher.getCipher(Kingdom.valueOf(array[0]).getEmblem()));
@@ -58,10 +59,8 @@ public class TameOfThronesMain {
                 : "NONE";
     }
 
-    private List<String> getInput(String inputFilePath) throws IOException {
-        List<String> strings = Files.readAllLines(Paths.get(inputFilePath));
-        LOGGER.debug("Messages extracted from file : {}", strings);
-        return strings;
+    private List<String> extractMessagesFromFile(String filePathContainingKingdomsMessages) throws IOException {
+        return Files.readAllLines(Paths.get(filePathContainingKingdomsMessages));
     }
 
     private Boolean checkMessageMatching(String[] message) {

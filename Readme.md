@@ -106,7 +106,7 @@ NONE
 
 ### With a file from repo
 ```console
-$ gradle clean build run --args="src/main/resources/input/sample.txt" --info
+$ gradle clean build run --args="docs/input-01.txt" --info
 ```
 
 ### With a file of your own

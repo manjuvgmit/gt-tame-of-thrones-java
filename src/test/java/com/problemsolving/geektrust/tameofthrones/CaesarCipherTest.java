@@ -1,9 +1,9 @@
 package com.problemsolving.geektrust.tameofthrones;
 
-import com.problemsolving.geektrust.tameofthrones.model.Kingdom;
 import org.junit.Test;
 
-import static com.problemsolving.geektrust.tameofthrones.util.CaesarCipher.*;
+import static com.problemsolving.geektrust.tameofthrones.CaesarCipher.decrypt;
+import static com.problemsolving.geektrust.tameofthrones.CaesarCipher.getCipher;
 import static org.junit.Assert.assertEquals;
 
 public class CaesarCipherTest {
@@ -19,6 +19,8 @@ public class CaesarCipherTest {
         assertEquals("Should match", "OLWL", decrypt("ROZO", getCipher(Kingdom.AIR.getEmblem())));
         assertEquals("Should match", "AVDERENJJAVHVP", decrypt("FAIJWJSOOFAMAU", getCipher(Kingdom.LAND.getEmblem())));
         assertEquals("Should match", "LMALMLMOLTLHL", decrypt("STHSTSTVSASOS", getCipher(Kingdom.ICE.getEmblem())));
+        assertEquals("Should match", "PTMXKsHVMHsOCTOPUSsINL", decrypt("WATER OCTO VJAVWBZ PUS", getCipher(Kingdom.WATER.getEmblem())));
+        assertEquals("Should match", "DRAIIGONII", decrypt("JXGOOMUTOO", getCipher(Kingdom.FIRE.getEmblem())));
     }
 
 }

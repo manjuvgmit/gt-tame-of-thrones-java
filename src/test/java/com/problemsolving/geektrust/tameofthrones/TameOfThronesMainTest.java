@@ -52,11 +52,11 @@ public class TameOfThronesMainTest {
     }
 
     private void runTestFromCommands(String expected, List<String> args) throws IOException {
-        assertExpectation(expected, classUnderTest.processMessages(args));
+        assertExpectation(expected, classUnderTest.processKingdomsMessages(args));
     }
 
     private void runTestFromFile(String expected, String args) throws IOException {
-        assertExpectation(expected, classUnderTest.processInputFromFile(args));
+        assertExpectation(expected, classUnderTest.acceptKingdomsMessagesFromFile(args));
     }
 
     private void assertExpectation(String expected, String generated) {
