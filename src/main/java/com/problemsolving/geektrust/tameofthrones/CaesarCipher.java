@@ -1,7 +1,5 @@
 package com.problemsolving.geektrust.tameofthrones;
 
-import com.problemsolving.geektrust.tameofthrones.Kingdom;
-
 public final class CaesarCipher {
 
     public static String encrypt(String inputString, int cipher) {

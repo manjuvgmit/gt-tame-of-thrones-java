@@ -1,12 +1,9 @@
 package com.problemsolving.geektrust.tameofthrones;
 
+import static com.problemsolving.geektrust.tameofthrones.Kingdom.Emblem.*;
+
 public enum Kingdom {
-    SPACE(Emblem.GORILLA),
-    LAND (Emblem.PANDA),
-    WATER(Emblem.OCTOPUS),
-    ICE  (Emblem.MAMMOTH),
-    AIR  (Emblem.OWL),
-    FIRE (Emblem.DRAGON);
+    SPACE(GORILLA), LAND(PANDA), WATER(OCTOPUS), ICE(MAMMOTH), AIR(OWL), FIRE(DRAGON);
 
     private final Emblem emblem;
 
@@ -20,5 +17,13 @@ public enum Kingdom {
 
     public enum Emblem {
         GORILLA, PANDA, OCTOPUS, MAMMOTH, OWL, DRAGON;
+
+        public String encrypt(String plainMessage) {
+            return CaesarCipher.encrypt(plainMessage, this.name().length());
+        }
+
+        public String decrypt(String encryptedMessage) {
+            return CaesarCipher.decrypt(encryptedMessage, this.name().length());
+        }
     }
 }

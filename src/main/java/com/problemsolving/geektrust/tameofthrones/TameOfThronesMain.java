@@ -3,7 +3,6 @@
  */
 package com.problemsolving.geektrust.tameofthrones;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,67 +10,81 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.groupingBy;
 
 public class TameOfThronesMain {
     static Logger LOGGER = LoggerFactory.getLogger(TameOfThronesMain.class.getSimpleName());
+    public static final String NONE = "NONE";
+    public static final String SPACE = " ";
 
     public static void main(String[] args) throws Exception {
         LOGGER.debug("Arguments are : {}", args);
-        if (args.length == 0) throw new Exception("Please specify file with commands.");
-        TameOfThronesMain instance = new TameOfThronesMain();
-        System.out.println(args.length == 1 ? instance.acceptKingdomsMessagesFromFile(args[0]) : instance.acceptKingdomsMessagesFromCli(args));
+        System.out.println(args.length > 0
+                ? new TameOfThronesMain().acceptKingdomsMessagesFromFile(args[0])
+                : "Please specify file with messages from kingdoms."
+        );
     }
 
     public String acceptKingdomsMessagesFromFile(String filePathContainingKingdomsMessages) throws IOException {
         return processKingdomsMessages(extractMessagesFromFile(filePathContainingKingdomsMessages));
     }
 
-    public String acceptKingdomsMessagesFromCli(String[] messagesFromKingdoms) throws Exception {
-        if (messagesFromKingdoms.length < 6)
-            throw new Exception("Please specify inputs in the format: kingdom1 msg1 kingdom2 msg2 kingdom3 msg3");
-        return processKingdomsMessages(ImmutableList.of(
-                String.join(" ", messagesFromKingdoms[0], messagesFromKingdoms[1]),
-                String.join(" ", messagesFromKingdoms[2], messagesFromKingdoms[3]),
-                String.join(" ", messagesFromKingdoms[4], messagesFromKingdoms[5])
-        ));
-    }
-
     public String processKingdomsMessages(List<String> messagesFromKingdoms) throws IOException {
         LOGGER.debug("Messages from kingdoms : {}", messagesFromKingdoms);
-        if (messagesFromKingdoms.size() < 3) return "NONE";
+        if (messagesFromKingdoms.size() < 3) {
+            return NONE;
+        }
         Set<String> allies = messagesFromKingdoms.stream()
-                .map(str -> new String[]{str.substring(0, str.indexOf(" ")), str.substring(str.indexOf(" ") + 1).replace(" ", "")})
-                .map(array -> {
-                    array[1] = CaesarCipher.decrypt(array[1], CaesarCipher.getCipher(Kingdom.valueOf(array[0]).getEmblem()));
-                    return array;
-                })
-                .filter(this::checkMessageMatching)
+                .map(trimSpacesAndExtractMessages())
+                .map(decryptMessage())
+                .filter(isKingdomInSupport())
                 .map(strings -> strings[0])
                 .collect(Collectors.toCollection(LinkedHashSet::new));
         return allies.size() > 2
-                ? Kingdom.SPACE.name() + " " + String.join(" ", allies)
-                : "NONE";
+                ? new StringBuilder()
+                .append(Kingdom.SPACE.name())
+                .append(SPACE)
+                .append(String.join(SPACE, allies))
+                .toString()
+                : NONE;
+    }
+
+    private Function<String, String[]> trimSpacesAndExtractMessages() {
+        return str -> {
+            List<String> strings = Arrays.stream(str.split(SPACE)).filter(Predicate.not(String::isBlank)).collect(Collectors.toList());
+            return new String[]{strings.get(0), String.join("", strings.subList(1, strings.size()))};
+        };
+    }
+
+    private Function<String[], String[]> decryptMessage() {
+        return strings -> {
+            strings[1] = Kingdom.valueOf(strings[0]).getEmblem().decrypt(strings[1]);
+            return strings;
+        };
     }
 
     private List<String> extractMessagesFromFile(String filePathContainingKingdomsMessages) throws IOException {
         return Files.readAllLines(Paths.get(filePathContainingKingdomsMessages));
     }
 
-    private Boolean checkMessageMatching(String[] message) {
-        Map<String, Long> emblemChars = Bytes.asList(Kingdom.valueOf(message[0]).getEmblem().name().getBytes()).stream()
-                .map(Object::toString).collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-        Map<String, Long> msgChars = Bytes.asList(message[1].getBytes()).stream()
-                .map(Object::toString).collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-        return emblemChars.entrySet().stream()
-                .filter(entry -> msgChars.containsKey(entry.getKey()))
-                .filter(entry -> msgChars.get(entry.getKey()) >= entry.getValue())
-                .count() == emblemChars.size();
+    private Predicate<String[]> isKingdomInSupport() {
+        return message -> {
+            Map<String, Long> emblemChars = Bytes.asList(Kingdom.valueOf(message[0]).getEmblem().name().getBytes()).stream()
+                    .map(Object::toString).collect(groupingBy(identity(), counting()));
+            Map<String, Long> msgChars = Bytes.asList(message[1].getBytes()).stream()
+                    .map(Object::toString).collect(groupingBy(identity(), counting()));
+            return emblemChars.entrySet().stream()
+                    .filter(entry -> msgChars.containsKey(entry.getKey()))
+                    .filter(entry -> msgChars.get(entry.getKey()) >= entry.getValue())
+                    .count() == emblemChars.size();
+        };
     }
 
 }
