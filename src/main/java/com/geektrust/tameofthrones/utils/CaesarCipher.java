@@ -1,4 +1,6 @@
-package com.problemsolving.geektrust.tameofthrones;
+package com.geektrust.tameofthrones.utils;
+
+import com.geektrust.tameofthrones.entity.Emblem;
 
 public final class CaesarCipher {
 
@@ -26,7 +28,7 @@ public final class CaesarCipher {
         return result.toString();
     }
 
-    public static int getCipher(Kingdom.Emblem emblem) {
+    public static int getCipher(Emblem emblem) {
         return emblem.name().length();
     }
 }

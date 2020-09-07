@@ -13,13 +13,12 @@ repositories {
 
 dependencies {
     implementation 'com.google.guava:guava:29.0-jre'
-    implementation 'org.slf4j:slf4j-simple:1.6.1'
     testImplementation 'junit:junit:4.13'
 }
 
 application {
     // Define the main class for the application.
-    mainClassName = 'com.problemsolving.geektrust.tameofthrones.TameOfThronesMain'
+    mainClassName = 'com.geektrust.tameofthrones.App'
     //applicationDefaultJvmArgs = [ '--args=input/input-01.txt' ]
 }
 
@@ -29,7 +28,7 @@ jar {
     version = null
 
     manifest {
-        attributes 'Main-Class': 'com.problemsolving.geektrust.tameofthrones.TameOfThronesMain'
+        attributes 'Main-Class': 'com.geektrust.tameofthrones.App'
     }
     // To create a single jar with all dependencies.
     from {
